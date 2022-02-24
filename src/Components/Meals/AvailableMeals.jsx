@@ -31,33 +31,33 @@ import { useEffect, useState } from 'react';
 // ];
 
 const AvailableMeals = () => {
-  const [meals, setMeals] = useState([]);
-  useEffect (() => {
-    const fetchMeals = async () => {
-      const response = await fetch('https://react-posting-default-rtdb.firebaseio.com/meals.json');
-      const responseData = await response.json();
-      const loadedMeals = [];
-      for (const key in responseData) {
-        loadedMeals.push({
-          id: key,
-          name: responseData[key].name,
-          description: responseData[key].description,
-          price: responseData[key].price
-        })
+  const [meals, setMeals] = useState([]);//setting state so that data has a place to go and load
+  useEffect(() => {//setting useEffect bc we want someting to happen on page load
+    const fetchMeals = async () => {//making the fetch call into a function so it's easier to work with
+      const response = await fetch ('https://react-posting-default-rtdb.firebaseio.com/meals.json');//this syntax handles the promise better, more readable, and sets up following promises to be set as constants
+      const responseData = await response.json();//turning the response data into json for usability
+      const loadedData = [];//getting the data ready to be pushed into a self valued array
+      for (const key in responseData) {//called a 'for in loop', telling the subsequent data to connect their data location to the key
+        loadedData.push ({//pushing the json data into the loadedData const
+          id: key,//telling the id paramter to search for a key
+          name: responseData[key].name,//name relays to name key
+          description: responseData[key].description,//description relays to description key
+          price: responseData[key].price//price relays to price key
+        });
       };
-      setMeals(loadedMeals);
-    };
-    fetchMeals();
-  },[])
-  const mealsList = meals.map((meal) => (
+      setMeals(loadedData);//setMeals state relies on the json data pushed into loadedData
+    }
+    fetchMeals();//telling the function to execute and since it's in useEffect it only happens on page load
+  },[])//the empty array means we only want useEffect to run upon page load and refresh, it is not dependent on a function
+  const mealsList = meals.map((meal) => (//mapping through data, meals is the initial state that we're running the data through so we map through it
     <MealItem
-      key={meal.id}
-      id={meal.id}
-      name={meal.name}
-      description={meal.description}
-      price={meal.price}
+    key={meal.id}
+    id={meal.id}
+    name={meal.name}
+    description={meal.description}
+    price={meal.price}
     />
-  ));
+  ))
 
   return (
     <section className={classes.meals}>
