@@ -32,9 +32,15 @@ import { useEffect, useState } from 'react';
 
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);//setting state so that data has a place to go and load
+  const [isLoading, setIsLoading] = useState(true);//this state is true becasue in this case data is being loaded upon page load
+  const [hasError, setHasError] = useState(null);
+  
   useEffect(() => {//setting useEffect bc we want someting to happen on page load
     const fetchMeals = async () => {//making the fetch call into a function so it's easier to work with
       const response = await fetch ('https://react-posting-default-rtdb.firebaseio.com/meals.json');//this syntax handles the promise better, more readable, and sets up following promises to be set as constants
+      if (!response.ok) {
+        throw new Error('Something Went Wrong');
+      };
       const responseData = await response.json();//turning the response data into json for usability
       const loadedData = [];//getting the data ready to be pushed into a self valued array
       for (const key in responseData) {//called a 'for in loop', telling the subsequent data to connect their data location to the key
@@ -46,9 +52,28 @@ const AvailableMeals = () => {
         });
       };
       setMeals(loadedData);//setMeals state relies on the json data pushed into loadedData
+      setIsLoading(false);
+
     }
-    fetchMeals();//telling the function to execute and since it's in useEffect it only happens on page load
+      fetchMeals().catch((error) => {//telling the function to execute and since it's in useEffect it only happens on page load
+        setIsLoading(false);
+        setHasError(error.message)
+      });
   },[])//the empty array means we only want useEffect to run upon page load and refresh, it is not dependent on a function
+  
+  if (isLoading) {//adds a little loading message upon page load
+    return <section className={classes.MealsLoading}>
+      <p>Loading...</p>
+    </section>
+  }
+
+  if (hasError) {
+    return (<section className={classes.MealsError}>
+      <p>{hasError}</p>
+    </section>
+    )
+  }
+  
   const mealsList = meals.map((meal) => (//mapping through data, meals is the initial state that we're running the data through so we map through it
     <MealItem
     key={meal.id}
