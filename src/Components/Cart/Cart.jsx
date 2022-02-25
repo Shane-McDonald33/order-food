@@ -1,11 +1,13 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 import Modal from '../UI/Modal';
 import CartItem from './CartItem';
 import classes from './Cart.module.css';
 import CartContext from '../../Store/cart-context';
+import Checkout from './Checkout'
 
 const Cart = (props) => {
+  const [isCheckout, setIsCheckout] = useState(false);
   const cartCtx = useContext(CartContext);
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
@@ -18,6 +20,10 @@ const Cart = (props) => {
   const cartItemAddHandler = (item) => {
     cartCtx.addItem({ ...item, amount: 1 });
   };
+
+  const orderHandler = () => {
+    setIsCheckout(true)//all this does is swtiching isCheckout to true
+  }
 
   const cartItems = (
     <ul className={classes['cart-items']}>
@@ -41,11 +47,12 @@ const Cart = (props) => {
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
+      {isCheckout && <Checkout/>} {/*This tell us that this component is conditional on certain state being true*/}
       <div className={classes.actions}>
         <button className={classes['button--alt']} onClick={props.onClose}>
           Close
         </button>
-        {hasItems && <button className={classes.button}>Order</button>}
+        {hasItems && <button className={classes.button} onClick={orderHandler}>Order</button>}{/*The function this button relays to turns isCheckout state to true, triggering the Checkout component to show up*/}
       </div>
     </Modal>
   );
