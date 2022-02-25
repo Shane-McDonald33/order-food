@@ -40,6 +40,13 @@ const Cart = (props) => {
     </ul>
   );
 
+  const modalActions = <div className={classes.actions}>
+  <button className={classes['button--alt']} onClick={props.onClose}>
+    Close
+  </button>
+  {hasItems && <button className={classes.button} onClick={orderHandler}>Order</button>}{/*The function this button relays to turns isCheckout state to true, triggering the Checkout component to show up*/}
+  </div>
+
   return (
     <Modal onClose={props.onClose}>
       {cartItems}
@@ -47,13 +54,9 @@ const Cart = (props) => {
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
-      {isCheckout && <Checkout/>} {/*This tell us that this component is conditional on certain state being true*/}
-      <div className={classes.actions}>
-        <button className={classes['button--alt']} onClick={props.onClose}>
-          Close
-        </button>
-        {hasItems && <button className={classes.button} onClick={orderHandler}>Order</button>}{/*The function this button relays to turns isCheckout state to true, triggering the Checkout component to show up*/}
-      </div>
+      {isCheckout && <Checkout onCancel={props.onClose}/>} {/*This tell us that this component is conditional on certain state being true, NOTE: we initially set isCheckout to false in state, but here, isCheckout is truthy because it is in the curlies, this whole segment is depending on the orderHandler function*/}
+      {/*For line above, onCancel is props handled in Checkout component, looks like onclick-props.onCancel, so onCancel is the props call here*/}
+      {!isCheckout && modalActions}{/*Gets rid of the 'order' and a'clsoe' buttons when isCheckout is false, which in this case is after we click on order...I'm still a little confused on this one*/}
     </Modal>
   );
 };
