@@ -7,9 +7,9 @@ import CartContext from '../../Store/cart-context';
 import Checkout from './Checkout'
 
 const Cart = (props) => {
-  const [isCheckout, setIsCheckout] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [didSubmit, setDidSubmit] = useState(false);
+  const [isCheckout, setIsCheckout] = useState(false);//sets checkout state so we can use it
+  const [isSubmitting, setIsSubmitting] = useState(false);//this is for setting up a loading screen modal and action
+  const [didSubmit, setDidSubmit] = useState(false);//final modal with success message and successful transfer of data to backend
   const cartCtx = useContext(CartContext);
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
@@ -27,17 +27,17 @@ const Cart = (props) => {
     setIsCheckout(true)//all this does is swtiching isCheckout to true
   };
 
-  const submitOrderHandler = async (userData) => {
-    setIsSubmitting(true);
-    await fetch('https://react-posting-default-rtdb.firebaseio.com/orders.json', {
+  const submitOrderHandler = async (userData) => {//userData to be used for sending data to backend
+    setIsSubmitting(true);//because we're submitting the cart data to backend
+    await fetch('https://react-posting-default-rtdb.firebaseio.com/orders.json', {//posting the data to the backend, we don't set the fetch to a constant because the data shouldn't need a helper constant 
       method: 'POST',
-      body: JSON.stringify({
-        user: userData,
-        orderedItems: cartCtx.items
+      body: JSON.stringify({//I think you stringify when posting json data to backend
+        user: userData,//I'm not too clear here, I think "user" here refers to backend value and we're swapping it for 
+        orderedItems: cartCtx.items//need to figure out why this one is here
       })
     });
-    setIsSubmitting(false);
-    setDidSubmit(true);
+    setIsSubmitting(false);//bc no longer submitting data
+    setDidSubmit(true);//this is true bc an action is called after we submit data, i.e. after this function happens
     cartCtx.clearCart();
   };
 
@@ -56,7 +56,7 @@ const Cart = (props) => {
     </ul>
   );
 
-  const modalActions = (<div className={classes.actions}>
+  const modalActions = (<div className={classes.actions}>{/*moved the order and cancel buttons into their own const for leaner jsx and usability*/}
   <button className={classes['button--alt']} onClick={props.onClose}>
     Close
   </button>
